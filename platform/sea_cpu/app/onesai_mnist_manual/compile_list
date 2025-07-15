@@ -1,0 +1,6 @@
+all:../../util/arx/arx-api/lib
+all:../../util/arx/arx-api/include
+all:../../util/arx/arx-api/test/board_test/mnist/src
+all:../../util/arx/arx-api/test/board_test/mnist/build/include
+all:../../util/arx/arx-api/test/board_test/mnist/build/lib
+all:../../user/api
