@@ -1,6 +1,6 @@
 ## ****************************************************************************
 ## ****************************************************************************
-## Copyright SoC Design Research Group, All rights reserved.    
+## Copyright SoC Design Research Group, All rights reserved.
 ## Electronics and Telecommunications Research Institute (ETRI)
 ##
 ## THESE DOCUMENTS CONTAIN CONFIDENTIAL INFORMATION AND KNOWLEDGE 
@@ -27,7 +27,7 @@ include ${RVX_UTIL_HOME}/template_makefile.mh
 
 UTIL_LIST=mmio rom image fakefile npx arx
 
-$(addsuffix .base, ${UTIL_LIST}):%.base:
+$(addsuffix .base, ${UTIL_LIST})::%.base:
 	@if [ ! -d $(*) ]; \
 	then \
 		mkdir $(*); \
@@ -37,6 +37,12 @@ $(addsuffix .base, ${UTIL_LIST}):%.base:
 	then \
 		cp -f ${RVX_ENV}/util/gitignore.$(*).txt ${CURDIR}/$(*)/.gitignore; \
 	fi
+
+fakefile.base::
+	@cd fakefile && mkdir -p target
+
+npx.base::
+	@cd npx && mkdir -p app
 
 ${UTIL_LIST}:%: FORCE %.base
 

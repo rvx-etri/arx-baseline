@@ -9,17 +9,25 @@ include ${RVX_UTIL_HOME}/template_makefile.mh
 
 -include ./rvx_each.mh
 
+ARX_API_GIT_VERSION_STABLE=37778b
+ARX_API_GIT_VERSION?=${ARX_API_GIT_VERSION_STABLE}
 ARX_API_DIR=${CURDIR}/arx-api
 APP_NAME_LIST=mnist small_charRNN
 
-all: arx
+check:
+	@echo ${ARX_API_GIT_VERSION}
+	@echo ${APP_NAME_LIST}
+
+all: arx_all
 
 clean:
 	@true
 
 reall: arx_api_clean all
 
-arx: onnx arx_api
+setup: arx_api_setup
+
+arx_all: onnx arx_api
 
 onnx:
 	${PYTHON3_CMD} -m pip install onnx onnxruntime
@@ -27,17 +35,17 @@ onnx:
 arx_api_clean:
 	rm -rf ${ARX_API_DIR}
 
-arx_api: arx_api_clone arx_api_build arx_api_fix
+arx_api: arx_api_clone arx_api_setup arx_api_build arx_api_fix
 
 arx_api_clone:
 	@if [ ! -d ${ARX_API_DIR} ]; \
 	then \
 		git clone https://gitlab.com/ones-ai/arx-api.git ${ARX_API_DIR}; \
 	fi
-	cd ${ARX_API_DIR} && git pull origin main
-ifdef ARX_GIT_VERSION
-	cd ${ARX_API_DIR} && git checkout ${ARX_GIT_VERSION}
-endif
+
+arx_api_setup:
+	@cd ${ARX_API_DIR} && git pull origin main
+	@cd ${ARX_API_DIR} && git checkout ${ARX_API_GIT_VERSION}
 
 $(addprefix arx_api_build., $(APP_NAME_LIST)):arx_api_build.%:
 	cd ${ARX_API_DIR}/test/board_test/$(*) && make build
