@@ -1,8 +1,5 @@
-## RISC-V eXpress
-
-**RISC-V eXpress (RVX)** is a hardware/software development kit for designing low-power SoCs for embedded systems, such as MCUs or lightweight application processors.
-
-[https://riscvexpress.github.io](https://riscvexpress.github.io)
+## AI RISC-V eXpress
+**AI RISC-V eXpress (ARX)** is an extension of RVX that incorporates AI functionality.
 
 ## Install
 
