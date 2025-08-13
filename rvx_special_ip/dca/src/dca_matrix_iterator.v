@@ -11,7 +11,7 @@
 // IN ANY FORM, BY ANY MEANS, IN WHOLE OR IN PART, WITHOUT THE
 // COMPLETE PRIOR WRITTEN PERMISSION OF ETRI.
 // ****************************************************************************
-// 2025-06-16
+// 2025-08-12
 // Kyuseung Han (han@etri.re.kr)
 // ****************************************************************************
 // ****************************************************************************
@@ -75,57 +75,24 @@ output wire is_last_x;
 output wire is_first_y;
 output wire is_last_y;
 
-reg [BW_NUM_ROW-1:0] dca_signal_0;
-reg [BW_NUM_COL-1:0] dca_signal_1;
+reg [BW_NUM_ROW-1:0] dca_signal_1;
+reg [BW_NUM_COL-1:0] dca_signal_0;
 
 always@(posedge clk, negedge rstnn)
 begin
   if(rstnn==0)
-    dca_signal_1 <= 0;
+    dca_signal_0 <= 0;
   else if(clear)
-    dca_signal_1 <= 0;
+    dca_signal_0 <= 0;
   else if(enable)
   begin
     if(is_col_first)
     begin
       if(go_next_base)
-        dca_signal_1 <= 0;
-      else if(iterate)
-      begin
-        if(is_last_col)
-          dca_signal_1 <= 0;
-        else
-          dca_signal_1 <= dca_signal_1 + 1'b 1;
-      end
-    end
-    else if(go_next_base)
-    begin
-      if(is_last_col)
-        dca_signal_1 <= 0;
-      else
-        dca_signal_1 <= dca_signal_1 + 1'b 1;
-    end
-  end
-end
-
-assign is_first_col = (dca_signal_1==0);
-assign is_last_col = (dca_signal_1==num_col_m1);
-
-always@(posedge clk, negedge rstnn)
-begin
-  if(rstnn==0)
-    dca_signal_0 <= 0;
-  else if(clear)
-    dca_signal_0 <= 0;
-  else if(enable)
-  begin
-    if(~is_col_first)
-    begin
-      if(go_next_base)
         dca_signal_0 <= 0;
       else if(iterate)
       begin
-        if(is_last_row)
+        if(is_last_col)
           dca_signal_0 <= 0;
         else
           dca_signal_0 <= dca_signal_0 + 1'b 1;
@@ -133,7 +100,7 @@ begin
     end
     else if(go_next_base)
     begin
-      if(is_last_row)
+      if(is_last_col)
         dca_signal_0 <= 0;
       else
         dca_signal_0 <= dca_signal_0 + 1'b 1;
@@ -141,8 +108,41 @@ begin
   end
 end
 
-assign is_first_row = (dca_signal_0==0);
-assign is_last_row = (dca_signal_0==num_row_m1);
+assign is_first_col = (dca_signal_0==0);
+assign is_last_col = (dca_signal_0==num_col_m1);
+
+always@(posedge clk, negedge rstnn)
+begin
+  if(rstnn==0)
+    dca_signal_1 <= 0;
+  else if(clear)
+    dca_signal_1 <= 0;
+  else if(enable)
+  begin
+    if(~is_col_first)
+    begin
+      if(go_next_base)
+        dca_signal_1 <= 0;
+      else if(iterate)
+      begin
+        if(is_last_row)
+          dca_signal_1 <= 0;
+        else
+          dca_signal_1 <= dca_signal_1 + 1'b 1;
+      end
+    end
+    else if(go_next_base)
+    begin
+      if(is_last_row)
+        dca_signal_1 <= 0;
+      else
+        dca_signal_1 <= dca_signal_1 + 1'b 1;
+    end
+  end
+end
+
+assign is_first_row = (dca_signal_1==0);
+assign is_last_row = (dca_signal_1==num_row_m1);
 
 assign is_first_element = is_first_col & is_first_row;
 assign is_last_element = is_last_col & is_last_row;

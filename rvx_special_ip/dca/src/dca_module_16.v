@@ -11,7 +11,7 @@
 // IN ANY FORM, BY ANY MEANS, IN WHOLE OR IN PART, WITHOUT THE
 // COMPLETE PRIOR WRITTEN PERMISSION OF ETRI.
 // ****************************************************************************
-// 2025-06-16
+// 2025-08-12
 // Kyuseung Han (han@etri.re.kr)
 // ****************************************************************************
 // ****************************************************************************
@@ -22,135 +22,224 @@
 
 
 
+
 module DCA_MODULE_16
 (
+  dca_port_05,
   dca_port_00,
-  dca_port_10,
-  dca_port_08,
-  dca_port_01,
+  dca_port_13,
+  dca_port_19,
+  dca_port_20,
 
+  dca_port_07,
+
+  dca_port_10,
+  dca_port_02,
   dca_port_03,
 
-  dca_port_05,
-  dca_port_06,
   dca_port_04,
-  dca_port_11,
-
+  dca_port_06,
   dca_port_12,
-  dca_port_07,
+
+  dca_port_16,
+  dca_port_08,
+  dca_port_18,
+  dca_port_17,
+  dca_port_15,
+
+  dca_port_01,
   dca_port_09,
-  dca_port_02  
+  dca_port_14,
+  dca_port_11
 );
+
 
 
 
 parameter LSU_PARA = 0;
 parameter AXI_PARA = 32;
+parameter BW_LPI_BURDEN = 1;
 parameter MATRIX_SIZE_PARA = 4;
+parameter TENSOR_PARA = 0;
 
 `include "ervp_axi_lpara.vb"
 `include "dca_matrix_dim_util.vb"
 `include "dca_matrix_dim_lpara.vb"
 
+input wire dca_port_05;
 input wire dca_port_00;
-input wire dca_port_10;
-input wire dca_port_08;
-input wire dca_port_01;
+input wire dca_port_13;
+input wire dca_port_19;
+output wire dca_port_20;
 
+output wire dca_port_07;
 `include "dca_lsu_util.vb"
 `include "dca_lsu_lpara.vb"
 
-input wire [BW_RRESP_INFO-1:0] dca_port_03;
+input wire dca_port_10;
+input wire [BW_RRESP_INFO-1:0] dca_port_02;
+output wire dca_port_03;
 
-output wire dca_port_05;
-input wire dca_port_06;
-input wire [BW_LSU_ELEMENT_ROW-1:0] dca_port_04;
-input wire [BW_TXN_INFO-1:0] dca_port_11;
+input wire dca_port_04;
+input wire [BW_TXN_INFO-1:0] dca_port_06;
+output wire dca_port_12;
 
-input wire dca_port_12;
-output wire dca_port_07;
-output wire [BW_MEMORY_ROW_BUFFER-1:0] dca_port_09;
-output wire [BW_TXN_INFO-1:0] dca_port_02;
+`include "lpit_function.vb"
+`include "lpixm_function.vb"
 
-integer i;
+localparam BW_LPIXM_ADDR = BW_AXI_ADDR;
+localparam BW_LPIXM_DATA = BW_AXI_DATA;
 
-wire [`BW_DCA_MATRIX_LSU_INST_OPCODE-1:0] dca_signal_10;
-wire [`BW_DCA_MATRIX_INFO_ADDR-1:0] dca_signal_02;
-wire [`BW_DCA_MATRIX_INFO_STRIDE_LS3-1:0] dca_signal_05;
-wire [`BW_DCA_MATRIX_INFO_NUM_ROW_M1-1:0] dca_signal_04;
-wire [`BW_DCA_MATRIX_INFO_NUM_COL_M1-1:0] dca_signal_06;
-wire [`BW_DCA_MATRIX_INFO_IS_SIGNED-1:0] dca_signal_07;
-wire [`BW_DCA_MATRIX_INFO_IS_FLOAT-1:0] dca_signal_08;
-wire [`BW_DCA_MATRIX_INFO_ADDR_LSA_P3-1:0] dca_signal_09;
+`include "lpixm_lpara.vb"
 
-wire [MATRIX_NUM_COL-1:0] dca_signal_00;
+output wire [2-1:0] dca_port_16;
+input wire dca_port_08;
+input wire dca_port_18;
+input wire dca_port_17;
+input wire [BW_LPI_YDATA-1:0] dca_port_15;
+
+`include "dca_tensor_scalar_lpara.vb"
+`include "dca_tensor_dim_lpara.vb"
+
+output wire dca_port_01;
+output wire dca_port_09;
+output wire [BW_TENSOR_ROW-1:0] dca_port_14;
+input wire dca_port_11;
+
+wire dca_signal_03;
+wire dca_signal_07;
+wire dca_signal_10;
+wire [BW_AXI_DATA-1:0] dca_signal_06;
+
+wire dca_signal_05;
+wire dca_signal_15;
+wire [BW_MEMORY_ROW_BUFFER-1:0] dca_signal_00;
+wire [BW_TXN_INFO-1:0] dca_signal_12;
+
+wire dca_signal_14;
+wire dca_signal_13;
+wire [BW_MEMORY_ROW_BUFFER-1:0] dca_signal_02;
+wire [BW_TXN_INFO-1:0] dca_signal_04;
 
 wire dca_signal_01;
-reg [MAX_BW_MEMORY_SINGLE_DEFAULT*MATRIX_NUM_COL-1:0] dca_signal_03;
+wire dca_signal_09;
+wire [BW_LSU_ELEMENT_ROW-1:0] dca_signal_11;
+wire [BW_TXN_INFO-1:0] dca_signal_08;
 
-assign {dca_signal_00, dca_signal_09, dca_signal_08, dca_signal_07, dca_signal_06, dca_signal_04, dca_signal_05, dca_signal_02, dca_signal_10} = dca_port_03;
+DCA_MODULE_04
+#(
+  .LSU_PARA(LSU_PARA),
+  .AXI_PARA(AXI_PARA),
+  .MATRIX_SIZE_PARA(MATRIX_SIZE_PARA)
+)
+i_dca_instance_1
+(
+  .dca_port_07(dca_port_05),
+  .dca_port_02(dca_port_00),
+  .dca_port_09(dca_port_13),
+  .dca_port_06(dca_port_19),
 
-always@(*)
-begin
-  dca_signal_03 = 0;
-  for(i=0; i<MATRIX_NUM_COL; i=i+1)
-  begin
-    case(dca_signal_09)
-      0:
-      begin
-        dca_signal_03[1*i+:1] = $unsigned(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-      end
-      1:
-      begin
-        if(dca_signal_07)
-          dca_signal_03[2*i+:2] = $signed(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-        else
-          dca_signal_03[2*i+:2] = $unsigned(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-      end
-      2:
-      begin
-        if(dca_signal_07)
-          dca_signal_03[4*i+:4] = $signed(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-        else
-          dca_signal_03[4*i+:4] = $unsigned(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-      end
-      3:
-      begin
-        if(dca_signal_07)
-          dca_signal_03[8*i+:8] = $signed(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-        else
-          dca_signal_03[8*i+:8] = $unsigned(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-      end
-      4:
-      begin
-        if(dca_signal_07)
-          dca_signal_03[16*i+:16] = $signed(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-        else
-          dca_signal_03[16*i+:16] = $unsigned(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-      end
-      5:
-      begin
-        if(dca_signal_07)
-          dca_signal_03[32*i+:32] = $signed(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-        else
-          dca_signal_03[32*i+:32] = $unsigned(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-      end
-      default:
-      begin
-        if(dca_signal_07)
-          dca_signal_03[32*i+:32] = $signed(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-        else
-          dca_signal_03[32*i+:32] = $unsigned(dca_port_04[BW_LSU_ELEMENT*i+:BW_LSU_ELEMENT]);
-      end
-    endcase
-  end
-end
+  .dca_port_03(dca_port_04),
+  .dca_port_12(dca_port_06),
+  .dca_port_00(dca_port_12),
 
-assign dca_signal_01 = dca_port_06;
+  .dca_port_13(dca_signal_03),
+  .dca_port_10(dca_signal_07),
+  .dca_port_11(dca_signal_10),
+  .dca_port_01(dca_signal_06),
 
-assign dca_port_05 = dca_port_12;
-assign dca_port_07 = dca_signal_01;
-assign dca_port_09 = dca_signal_03;
-assign dca_port_02 = dca_port_11;
+  .dca_port_04(dca_signal_05),
+  .dca_port_08(dca_signal_15),
+  .dca_port_14(dca_signal_00),
+  .dca_port_05(dca_signal_12)
+);
+
+assign dca_port_16 = dca_signal_03;
+assign dca_signal_07 = dca_port_08;
+assign dca_signal_10 = dca_port_17;
+assign dca_signal_06 = dca_port_15;
+
+DCA_MODULE_17
+#(
+  .LSU_PARA(LSU_PARA),
+  .AXI_PARA(AXI_PARA),
+  .MATRIX_SIZE_PARA(MATRIX_SIZE_PARA)
+)
+i_dca_instance_2
+(
+  .dca_port_06(dca_port_05),
+  .dca_port_03(dca_port_00),
+  .dca_port_01(dca_port_13),
+  .dca_port_10(dca_port_19),
+
+  .dca_port_00(dca_port_02),
+
+  .dca_port_02(dca_signal_05),
+  .dca_port_04(dca_signal_15),
+  .dca_port_08(dca_signal_00),
+  .dca_port_09(dca_signal_12),
+
+  .dca_port_05(dca_signal_14),
+  .dca_port_11(dca_signal_13),
+  .dca_port_07(dca_signal_02),
+  .dca_port_12(dca_signal_04)
+);
+
+DCA_MODULE_05
+#(
+  .LSU_PARA(LSU_PARA),
+  .AXI_PARA(AXI_PARA),
+  .MATRIX_SIZE_PARA(MATRIX_SIZE_PARA)
+)
+i_dca_instance_0
+(
+  .dca_port_00(dca_port_05),
+  .dca_port_12(dca_port_00),
+  .dca_port_07(dca_port_13),
+  .dca_port_11(dca_port_19),
+
+  .dca_port_02(dca_port_02),
+
+  .dca_port_09(dca_signal_14),
+  .dca_port_05(dca_signal_13),
+  .dca_port_01(dca_signal_02),
+  .dca_port_10(dca_signal_04),
+
+  .dca_port_08(dca_signal_01),
+  .dca_port_06(dca_signal_09),
+  .dca_port_03(dca_signal_11),
+  .dca_port_04(dca_signal_08)
+);
+
+DCA_MODULE_18
+#(
+  .LSU_PARA(LSU_PARA),
+  .AXI_PARA(AXI_PARA),
+  .MATRIX_SIZE_PARA(MATRIX_SIZE_PARA),
+  .TENSOR_PARA(TENSOR_PARA)
+)
+i_dca_instance_3
+(
+  .dca_port_00(dca_port_05),
+  .dca_port_04(dca_port_00),
+  .dca_port_06(dca_port_13),
+  .dca_port_08(dca_port_19),
+
+  .dca_port_03(dca_port_02),
+
+  .dca_port_05(dca_signal_01),
+  .dca_port_09(dca_signal_09),
+  .dca_port_02(dca_signal_11),
+  .dca_port_01(dca_signal_08),
+
+  .dca_port_12(dca_port_01),
+  .dca_port_10(dca_port_09),
+  .dca_port_07(dca_port_14),
+  .dca_port_11(dca_port_11)
+);
+
+assign dca_port_03 = dca_port_01 & dca_port_11 & dca_port_09;
+assign dca_port_07 = dca_port_03;
+assign dca_port_20 = dca_port_10;
 
 endmodule

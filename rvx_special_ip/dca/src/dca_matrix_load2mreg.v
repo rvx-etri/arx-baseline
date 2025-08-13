@@ -11,7 +11,7 @@
 // IN ANY FORM, BY ANY MEANS, IN WHOLE OR IN PART, WITHOUT THE
 // COMPLETE PRIOR WRITTEN PERMISSION OF ETRI.
 // ****************************************************************************
-// 2025-06-16
+// 2025-08-12
 // Kyuseung Han (han@etri.re.kr)
 // ****************************************************************************
 // ****************************************************************************
@@ -62,94 +62,94 @@ input wire load_tensor_row_wlast;
 input wire [BW_TENSOR_ROW-1:0] load_tensor_row_wdata;
 output wire load_tensor_row_wready;
 
-localparam  DCA_LPARA_4 = BW_TENSOR_ROW;
+localparam  DCA_LPARA_1 = BW_TENSOR_ROW;
 
 output wire mreg_move_wenable;
-output wire [DCA_LPARA_4-1:0] mreg_move_wdata_list1d;
+output wire [DCA_LPARA_1-1:0] mreg_move_wdata_list1d;
 
 output wire loadreg_rready;
 input wire loadreg_rrequest;
 
 genvar i;
 
-wire dca_signal_7;
-wire dca_signal_0;
-wire dca_signal_1;
-
-localparam  DCA_LPARA_1 = MATRIX_NUM_ROW;
-
-wire dca_signal_2;
 wire dca_signal_8;
-wire [DCA_LPARA_1-1:0] dca_signal_6;
-wire dca_signal_4;
+wire dca_signal_1;
+wire dca_signal_3;
+
+localparam  DCA_LPARA_4 = MATRIX_NUM_ROW;
+
 wire dca_signal_5;
+wire dca_signal_7;
+wire [DCA_LPARA_4-1:0] dca_signal_0;
+wire dca_signal_4;
+wire dca_signal_2;
 
 localparam  DCA_LPARA_5 = 2;
 localparam  DCA_LPARA_0 = 0;
-localparam  DCA_LPARA_3 = 1;
-localparam  DCA_LPARA_2 = 2;
+localparam  DCA_LPARA_2 = 1;
+localparam  DCA_LPARA_3 = 2;
 
-reg [DCA_LPARA_5-1:0] dca_signal_3;
+reg [DCA_LPARA_5-1:0] dca_signal_6;
 
-assign dca_signal_7 = load_tensor_row_wvalid & load_tensor_row_wready;
-assign dca_signal_0 = dca_signal_7 | (dca_signal_3==DCA_LPARA_3);
-assign dca_signal_1 = dca_signal_0 & dca_signal_5;
+assign dca_signal_8 = load_tensor_row_wvalid & load_tensor_row_wready;
+assign dca_signal_1 = dca_signal_8 | (dca_signal_6==DCA_LPARA_2);
+assign dca_signal_3 = dca_signal_1 & dca_signal_2;
 
 ERVP_COUNTER_WITH_ONEHOT_ENCODING
 #(
-  .COUNT_LENGTH(DCA_LPARA_1)
+  .COUNT_LENGTH(DCA_LPARA_4)
 )
 i_dca_instance_0
 (
   .clk(clk),
   .rstnn(rstnn),
   .enable(enable),
-  .init(dca_signal_2),
-  .count(dca_signal_8),
-  .value(dca_signal_6),
+  .init(dca_signal_5),
+  .count(dca_signal_7),
+  .value(dca_signal_0),
   .is_first_count(dca_signal_4),
-  .is_last_count(dca_signal_5)
+  .is_last_count(dca_signal_2)
 );
 
-assign dca_signal_2 = clear | dca_signal_1;
-assign dca_signal_8 = dca_signal_0;
+assign dca_signal_5 = clear | dca_signal_3;
+assign dca_signal_7 = dca_signal_1;
 
 always@(posedge clk or negedge rstnn)
 begin
   if(~rstnn)
-    dca_signal_3 <= DCA_LPARA_0;
+    dca_signal_6 <= DCA_LPARA_0;
   else if(clear)
-    dca_signal_3 <= DCA_LPARA_0;
+    dca_signal_6 <= DCA_LPARA_0;
   else if(enable)
-    case(dca_signal_3)
+    case(dca_signal_6)
       DCA_LPARA_0:
-        if(dca_signal_7 & load_tensor_row_wlast)
+        if(dca_signal_8 & load_tensor_row_wlast)
         begin
-          if(dca_signal_5)
-            dca_signal_3 <= DCA_LPARA_2;
+          if(dca_signal_2)
+            dca_signal_6 <= DCA_LPARA_3;
           else
-            dca_signal_3 <= DCA_LPARA_3;
+            dca_signal_6 <= DCA_LPARA_2;
         end
-      DCA_LPARA_3:
-        if(dca_signal_1)
-          dca_signal_3 <= DCA_LPARA_2;
       DCA_LPARA_2:
+        if(dca_signal_3)
+          dca_signal_6 <= DCA_LPARA_3;
+      DCA_LPARA_3:
         if(loadreg_rrequest)
-          dca_signal_3 <= DCA_LPARA_0;
+          dca_signal_6 <= DCA_LPARA_0;
     endcase
 end
 
-assign load_tensor_row_wready = (dca_signal_3==DCA_LPARA_0);
+assign load_tensor_row_wready = (dca_signal_6==DCA_LPARA_0);
 
-assign mreg_move_wenable = dca_signal_0;
+assign mreg_move_wenable = dca_signal_1;
 generate
 for(i=0; i<MATRIX_NUM_COL; i=i+1)
 begin : i_wdata
-  assign mreg_move_wdata_list1d[BW_TENSOR_SCALAR*i+:BW_TENSOR_SCALAR] = (dca_signal_3==DCA_LPARA_3)? TENSOR_ZERO : load_tensor_row_wdata[BW_TENSOR_SCALAR*i+:BW_TENSOR_SCALAR];
+  assign mreg_move_wdata_list1d[BW_TENSOR_SCALAR*i+:BW_TENSOR_SCALAR] = (dca_signal_6==DCA_LPARA_2)? TENSOR_ZERO : load_tensor_row_wdata[BW_TENSOR_SCALAR*i+:BW_TENSOR_SCALAR];
 end
 endgenerate
 
-assign loadreg_rready = (dca_signal_3==DCA_LPARA_2);
-assign busy = (dca_signal_3!=DCA_LPARA_2);
+assign loadreg_rready = (dca_signal_6==DCA_LPARA_3);
+assign busy = (dca_signal_6!=DCA_LPARA_3);
 
 endmodule
