@@ -11,7 +11,7 @@
 // IN ANY FORM, BY ANY MEANS, IN WHOLE OR IN PART, WITHOUT THE
 // COMPLETE PRIOR WRITTEN PERMISSION OF ETRI.
 // ****************************************************************************
-// 2025-08-12
+// 2025-08-27
 // Kyuseung Han (han@etri.re.kr)
 // ****************************************************************************
 // ****************************************************************************
@@ -56,45 +56,45 @@ input wire clear;
 input wire enable;
 output wire busy;
 
-localparam  DCA_LPARA_3 = BW_TENSOR_ROW;
+localparam  DCA_LPARA_2 = BW_TENSOR_ROW;
 
 output wire storereg_wready;
 input wire storereg_wrequest;
 
 output wire mreg_move_renable;
-input wire [DCA_LPARA_3-1:0] mreg_move_rdata_list1d;
+input wire [DCA_LPARA_2-1:0] mreg_move_rdata_list1d;
 
 input wire store_tensor_row_rvalid;
 input wire store_tensor_row_rlast;
 output wire store_tensor_row_rready;
 output wire [BW_TENSOR_ROW-1:0] store_tensor_row_rdata;
 
+wire dca_signal_5;
 wire dca_signal_7;
 wire dca_signal_1;
-wire dca_signal_8;
 
-localparam  DCA_LPARA_5 = MATRIX_NUM_ROW;
+localparam  DCA_LPARA_4 = MATRIX_NUM_ROW;
 
 wire dca_signal_3;
-wire dca_signal_6;
-wire [DCA_LPARA_5-1:0] dca_signal_0;
-wire dca_signal_4;
+wire dca_signal_0;
+wire [DCA_LPARA_4-1:0] dca_signal_8;
 wire dca_signal_2;
+wire dca_signal_4;
 
-localparam  DCA_LPARA_2 = 2;
+localparam  DCA_LPARA_5 = 2;
 localparam  DCA_LPARA_1 = 0;
 localparam  DCA_LPARA_0 = 1;
-localparam  DCA_LPARA_4 = 2;
+localparam  DCA_LPARA_3 = 2;
 
-reg [DCA_LPARA_2-1:0] dca_signal_5;
+reg [DCA_LPARA_5-1:0] dca_signal_6;
 
-assign dca_signal_7 = store_tensor_row_rready & store_tensor_row_rvalid;
-assign dca_signal_1 = dca_signal_7 | (dca_signal_5==DCA_LPARA_4);
-assign dca_signal_8 = dca_signal_1 & dca_signal_2;
+assign dca_signal_5 = store_tensor_row_rready & store_tensor_row_rvalid;
+assign dca_signal_7 = dca_signal_5 | (dca_signal_6==DCA_LPARA_3);
+assign dca_signal_1 = dca_signal_7 & dca_signal_4;
 
 ERVP_COUNTER_WITH_ONEHOT_ENCODING
 #(
-  .COUNT_LENGTH(DCA_LPARA_5)
+  .COUNT_LENGTH(DCA_LPARA_4)
 )
 i_dca_instance_0
 (
@@ -102,48 +102,48 @@ i_dca_instance_0
   .rstnn(rstnn),
   .enable(enable),
   .init(dca_signal_3),
-  .count(dca_signal_6),
-  .value(dca_signal_0),
-  .is_first_count(dca_signal_4),
-  .is_last_count(dca_signal_2)
+  .count(dca_signal_0),
+  .value(dca_signal_8),
+  .is_first_count(dca_signal_2),
+  .is_last_count(dca_signal_4)
 );
 
-assign dca_signal_3 = clear | dca_signal_8;
-assign dca_signal_6 = dca_signal_1;
+assign dca_signal_3 = clear | dca_signal_1;
+assign dca_signal_0 = dca_signal_7;
 
 always@(posedge clk, negedge rstnn)
 begin
   if(rstnn==0)
-    dca_signal_5 <= DCA_LPARA_1;
+    dca_signal_6 <= DCA_LPARA_1;
   else if(clear)
-    dca_signal_5 <= DCA_LPARA_1;
+    dca_signal_6 <= DCA_LPARA_1;
   else if(enable)
   begin
-    case(dca_signal_5)
+    case(dca_signal_6)
       DCA_LPARA_1:
         if(storereg_wrequest)
-          dca_signal_5 <= DCA_LPARA_0;
+          dca_signal_6 <= DCA_LPARA_0;
       DCA_LPARA_0:
-        if(dca_signal_7 & store_tensor_row_rlast)
+        if(dca_signal_5 & store_tensor_row_rlast)
         begin
-          if(dca_signal_2)
-            dca_signal_5 <= DCA_LPARA_1;
+          if(dca_signal_4)
+            dca_signal_6 <= DCA_LPARA_1;
           else
-            dca_signal_5 <= DCA_LPARA_4;
+            dca_signal_6 <= DCA_LPARA_3;
         end
-      DCA_LPARA_4:
-        if(dca_signal_8)
-          dca_signal_5 <= DCA_LPARA_1;
+      DCA_LPARA_3:
+        if(dca_signal_1)
+          dca_signal_6 <= DCA_LPARA_1;
     endcase
   end
 end
 
-assign mreg_move_renable = dca_signal_1;
+assign mreg_move_renable = dca_signal_7;
 
-assign store_tensor_row_rready = (dca_signal_5==DCA_LPARA_0);
+assign store_tensor_row_rready = (dca_signal_6==DCA_LPARA_0);
 assign store_tensor_row_rdata = mreg_move_rdata_list1d;
 
-assign storereg_wready = (dca_signal_5==DCA_LPARA_1);
-assign busy = (dca_signal_5!=DCA_LPARA_1);
+assign storereg_wready = (dca_signal_6==DCA_LPARA_1);
+assign busy = (dca_signal_6!=DCA_LPARA_1);
 
 endmodule
