@@ -1,0 +1,67 @@
+<?xml version="1.0" ?>
+<rvx>
+	<platform>
+		<name>test_edge_19p</name>
+		<status>described</status>
+		<spec>
+			<define>
+				<name>sram_size</name>
+				<value>128kB</value>
+      </define>
+      <define>
+				<name>include_fast_dram</name>
+				<value type="bool">True</value>
+      </define>
+    </spec>
+
+		<ip_instance>
+			<name>i_main_core</name>
+			<library_name>rvc_orca</library_name>
+		</ip_instance>
+
+		<ip_instance>
+      <name>i_user_ddr4</name>
+      <library_name>user_ddr4</library_name>
+
+      <parameter>
+        <id>CAPACITY</id>
+        <value>0x8000000</value>
+      </parameter>
+      <parameter>
+        <id>BW_ADDR</id>
+        <value>32</value>
+      </parameter>
+      <parameter>
+        <id>BW_DATA</id>
+        <value>128</value>
+      </parameter>
+      <parameter>
+        <id>BW_AXI_TID</id>
+        <value>16</value>
+      </parameter>
+    </ip_instance>
+
+    <ip_instance>
+      <name>i_user_ddr3</name>
+      <library_name>user_ddr3</library_name>
+
+      <parameter>
+        <id>CAPACITY</id>
+        <value>0x8000000</value>
+      </parameter>
+      <parameter>
+        <id>BW_ADDR</id>
+        <value>32</value>
+      </parameter>
+      <parameter>
+        <id>BW_DATA</id>
+        <value>128</value>
+      </parameter>
+      <parameter>
+        <id>BW_AXI_TID</id>
+        <value>16</value>
+      </parameter>
+    </ip_instance>
+
+  </platform>
+</rvx>
