@@ -9,7 +9,7 @@ include ${RVX_UTIL_HOME}/template_makefile.mh
 
 -include ./rvx_each.mh
 
-ARX_API_GIT_VERSION_STABLE=37778b
+ARX_API_GIT_VERSION_STABLE=89bcda
 ARX_API_GIT_VERSION?=${ARX_API_GIT_VERSION_STABLE}
 ARX_API_DIR=${CURDIR}/arx-api
 APP_NAME_LIST=mnist small_charRNN

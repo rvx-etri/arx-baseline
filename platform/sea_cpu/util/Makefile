@@ -27,32 +27,27 @@ include ${RVX_UTIL_HOME}/template_makefile.mh
 
 UTIL_LIST=mmio rom image fakefile npx arx
 
-$(addsuffix .base, ${UTIL_LIST})::%.base:
-	@if [ ! -d $(*) ]; \
-	then \
-		mkdir $(*); \
-	fi
-	@${PYTHON3_CMD} ${RVX_UTIL_HOME}/configure_template.py -i ${RVX_ENV}/util/Makefile.$(*).template -o ${CURDIR}/$(*)/Makefile
-	@if [ -f ${RVX_ENV}/util/gitignore.$(*).txt ]; \
-	then \
-		cp -f ${RVX_ENV}/util/gitignore.$(*).txt ${CURDIR}/$(*)/.gitignore; \
-	fi
+$(addsuffix .base, ${UTIL_LIST}):%.base:
+	@${PYTHON3_CMD} ${RVX_UTIL_HOME}/os_util.py mkdir ${CURDIR}/$(*)
+	@${PYTHON3_CMD} ${RVX_UTIL_HOME}/os_util.py cp_file ${RVX_ENV}/util/Makefile.$(*).template ${CURDIR}/$(*)/Makefile
+	@${PYTHON3_CMD} ${RVX_UTIL_HOME}/os_util.py cp_file ${RVX_ENV}/util/gitignore.$(*).txt ${CURDIR}/$(*)/.gitignore
 
-fakefile.base::
-	@cd fakefile && mkdir -p target
+fakefile: FORCE fakefile.base
+	@${PYTHON3_CMD} ${RVX_UTIL_HOME}/os_util.py mkdir ${CURDIR}/fakefile/target
 
-npx.base::
-	@cd npx && mkdir -p app
+npx: FORCE npx.base
+	@${PYTHON3_CMD} ${RVX_UTIL_HOME}/os_util.py mkdir ${CURDIR}/npx/app
 
-${UTIL_LIST}:%: FORCE %.base
+arx: FORCE arx.base
+
+generated: FORCE
+	@${PYTHON3_CMD} ${RVX_UTIL_HOME}/os_util.py mkdir ${CURDIR}/generated
+	@${PYTHON3_CMD} ${RVX_UTIL_HOME}/os_util.py cp_file ${RVX_ENV}/util/gitignore.generated.txt ${CURDIR}/generated/.gitignore
 
 clean: $(addsuffix .clean, ${UTIL_LIST})
 
 $(addsuffix .clean, ${UTIL_LIST}):%.clean:
-	@if [ -d $(*) ]; \
-	then \
-		cd $(*) && make --no-print-directory clean; \
-	fi
+	-@cd $(*) && make --no-print-directory clean
 
 -include ./user_util.mh
 
